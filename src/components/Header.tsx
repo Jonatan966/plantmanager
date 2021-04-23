@@ -1,4 +1,5 @@
-import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useEffect, useState } from 'react'
 import {
   StyleSheet,
   Text,
@@ -7,19 +8,62 @@ import {
 } from 'react-native'
 import { getStatusBarHeight } from 'react-native-iphone-x-helper'
 
-import userImg from '../assets/eu.jpeg'
 import colors from '../styles/colors'
 import { fonts } from '../styles/fonts'
 
+const dayStates = {
+  morning: {
+    emoji: '🌄',
+    greetingTime: 'Bom dia'
+  },
+  afternoon: {
+    emoji: '☀',
+    greetingTime: 'Boa tarde'
+  },
+  night: {
+    emoji: '🌑',
+    greetingTime: 'Boa noite'
+  }
+}
+
 export function Header() {
+  const [username, setUsername] = useState('. . .')
+  const [dayState, setDayState] = useState<'morning' | 'afternoon' | 'night'>('morning')
+
+  const currentDayState = dayStates[dayState]
+
+  useEffect(() => {
+    const currentHour = new Date().getHours()
+
+    if (currentHour >= 12 && currentHour < 17) {
+      setDayState('afternoon')
+    }
+    else if (currentHour >= 17) {
+      setDayState('night')
+    }
+    else setDayState('morning')
+  }, [])
+
+  useEffect(() => {
+    async function loadStoragedUsername() {
+      const user = await AsyncStorage.getItem('@plantmanager:user')
+      setUsername(user || '')
+    }
+    loadStoragedUsername()
+  }, [])
+
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.greeting}>Olá,</Text>
-        <Text style={styles.userName}>Jonas</Text>
+        <Text style={styles.greeting}>
+          {currentDayState.greetingTime},
+        </Text>
+        <Text style={styles.userName}>{username}</Text>
       </View>
 
-      <Image source={userImg} style={styles.image}/>
+      <Text style={styles.emoji}>
+        {currentDayState.emoji}
+      </Text>
     </View>
   )
 }
@@ -33,10 +77,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginTop: getStatusBarHeight(),
   },
-  image: {
-    width: 70,
-    height: 70,
-    borderRadius: 40
+  emoji: {
+    fontSize: 70
   },
   greeting: {
     fontSize: 32,
