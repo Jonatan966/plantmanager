@@ -3,8 +3,14 @@ import { NavigationContainer } from '@react-navigation/native'
 
 import { StackRoutes } from './stack.routes'
 
-export const Routes = () => (
+interface Params {
+  initialScreen: string;
+}
+
+export const Routes = ({ initialScreen }: Params) => (
   <NavigationContainer>
-    <StackRoutes />
+    <StackRoutes 
+      initialScreen={initialScreen}
+    />
   </NavigationContainer>
 )

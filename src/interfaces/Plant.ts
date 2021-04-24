@@ -1,5 +1,5 @@
 export interface PlantProps {
-  id: number;
+  id: string;
   name: string;
   about: string;
   water_tips: string;
@@ -9,5 +9,5 @@ export interface PlantProps {
     times: number;
     repeat_every: string;
   };
-  dateTimeNotification?: Date;
+  dateTimeNotification: Date;
 }
